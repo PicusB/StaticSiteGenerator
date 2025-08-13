@@ -5,6 +5,7 @@ from htmlnode import HTMLNode
 from leafnode import LeafNode
 from parentnode import ParentNode
 from text_node_to_html_node import textnode_to_html_node
+from split_nodes_delimiter import split_nodes_delimiter
 
 
 class TestTextNode(unittest.TestCase):
@@ -94,6 +95,15 @@ class TestTextToHTMLNode(unittest.TestCase):
         self.assertEqual(html_node.tag, "a")
         self.assertEqual(html_node.props, {"href" : '"https://picusb.itch.io"'})
 
+class TestSplitNodesDelimiter(unittest.TestCase):
+    def test_base_case(self):
+        node = TextNode("This is text with a `code block` word", TextType.TEXT)
+        new_nodes = split_nodes_delimiter([node], "`", TextType.CODE)
+        self.assertEqual(new_nodes[0].text, "This is text with a ")
+        self.assertEqual(new_nodes[1].text, "code block")
+        self.assertEqual(new_nodes[1].text_type, TextType.CODE)
+        self.assertEqual(new_nodes[2].text, " word")
+        self.assertEqual(new_nodes[2].text_type, TextType.TEXT)
 
 if __name__ == "__main__":
     unittest.main()
