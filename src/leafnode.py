@@ -11,7 +11,6 @@ class LeafNode(HTMLNode):
             return rf'{self.value}'
         elif self.props != None:
             return_string = rf"<{self.tag}"
-            print(f'Length of props: {len(self.props)}')
             for prop in self.props:
                 return_string+=rf" {prop}={self.props[prop]}"
             return_string +=rf">{self.value}</{self.tag}>"
