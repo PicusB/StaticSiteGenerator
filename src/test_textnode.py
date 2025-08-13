@@ -6,6 +6,8 @@ from leafnode import LeafNode
 from parentnode import ParentNode
 from text_node_to_html_node import textnode_to_html_node
 from split_nodes_delimiter import split_nodes_delimiter
+from extract_markdown_images import extract_markdown_images
+from extract_markdown_links import extract_markdown_links
 
 
 class TestTextNode(unittest.TestCase):
@@ -104,6 +106,16 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         self.assertEqual(new_nodes[1].text_type, TextType.CODE)
         self.assertEqual(new_nodes[2].text, " word")
         self.assertEqual(new_nodes[2].text_type, TextType.TEXT)
+
+class TestRegExImagesLinks(unittest.TestCase):
+    def test_image_extraction(self):
+        text = "This is text with a ![rick roll](https://i.imgur.com/aKaOqIh.gif) and ![obi wan](https://i.imgur.com/fJRm4Vk.jpeg)"
+        result = extract_markdown_images(text)
+        self.assertListEqual(result,  [("rick roll", "https://i.imgur.com/aKaOqIh.gif"), ("obi wan", "https://i.imgur.com/fJRm4Vk.jpeg")])
+    def test_link_extraction(self):
+        text =  "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
+        result = extract_markdown_links(text)
+        self.assertListEqual(result, [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")])
 
 if __name__ == "__main__":
     unittest.main()
