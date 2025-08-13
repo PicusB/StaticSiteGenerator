@@ -4,24 +4,25 @@ from textnode import TextNode, TextType
 from htmlnode import HTMLNode
 from leafnode import LeafNode
 from parentnode import ParentNode
+from text_node_to_html_node import textnode_to_html_node
 
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
-        node = TextNode("This is a text node", TextType.BOLD_TEXT)
-        node2 = TextNode("This is a text node", TextType.BOLD_TEXT)
+        node = TextNode("This is a text node", TextType.BOLD)
+        node2 = TextNode("This is a text node", TextType.BOLD)
         self.assertEqual(node, node2)
     def test_not_eq(self):
-        node = TextNode("This is a bold node", TextType.BOLD_TEXT)
-        node2 = TextNode("This is an italic node", TextType.ITALIC_TEXT)
+        node = TextNode("This is a bold node", TextType.BOLD)
+        node2 = TextNode("This is an italic node", TextType.ITALIC)
         self.assertNotEqual(node, node2)
     def test_eq_urls(self):
-        node = TextNode("Easy URL", TextType.PLAIN_TEXT, "https://boot.dev")
-        node2 = TextNode("Easy URL", TextType.PLAIN_TEXT, "https://boot.dev")
+        node = TextNode("Easy URL", TextType.TEXT, "https://boot.dev")
+        node2 = TextNode("Easy URL", TextType.TEXT, "https://boot.dev")
         self.assertEqual(node, node2)
     def test_noteq_URLNONE(self):
-        node = TextNode("Easy URL", TextType.PLAIN_TEXT, "https://boot.dev")
-        node2 = TextNode("Easy URL", TextType.PLAIN_TEXT)
+        node = TextNode("Easy URL", TextType.TEXT, "https://boot.dev")
+        node2 = TextNode("Easy URL", TextType.TEXT)
         self.assertNotEqual(node, node2)
 
 class TestHTMLNode(unittest.TestCase):
@@ -80,6 +81,18 @@ class TestParentNode(unittest.TestCase):
         child3 = LeafNode("u", "ThirdChild")
         parent = ParentNode("b", [child1, child2, child3])
         self.assertEqual(parent.to_html(), "<b><b>FirstChild</b><i>SecondChild</i><u>ThirdChild</u></b>")
+
+class TestTextToHTMLNode(unittest.TestCase):
+    def test_text(self):
+        node = TextNode("This is a text node", TextType.TEXT)
+        html_node = textnode_to_html_node(node)
+        self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.value, "This is a text node")
+    def test_URL(self):
+        node = TextNode("Best Games Evar!", TextType.LINK, '"https://picusb.itch.io"')
+        html_node = textnode_to_html_node(node)
+        self.assertEqual(html_node.tag, "a")
+        self.assertEqual(html_node.props, {"href" : '"https://picusb.itch.io"'})
 
 
 if __name__ == "__main__":
